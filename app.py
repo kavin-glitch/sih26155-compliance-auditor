@@ -156,7 +156,7 @@ def render_training_ui(vendor_label, unmatched_lines, session_key, config_text=N
                 config_text, forced_vendor_label=vendor_label
             )
             findings2 = engine.evaluate(normalized2, evidence2, rerun_vendor, framework)
-            summary2 = engine.summarize(findings2)
+            summary2 = engine.summarize(findings2, normalized2)
             st.session_state[f"{session_key}_rerun"] = {
                 "summary": summary2, "findings": findings2, "normalized": normalized2,
                 "unmatched": unmatched2, "vendor": rerun_vendor, "evidence": evidence2,
@@ -184,7 +184,7 @@ def audit_device(uf, framework, key_prefix):
     st.caption(f"Detected vendor: **{vendor.capitalize()}**")
 
     findings = engine.evaluate(normalized, evidence, vendor, framework)
-    summary = engine.summarize(findings)
+    summary = engine.summarize(findings, normalized)
 
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Compliance", f"{summary['compliance_pct']}%",
@@ -244,11 +244,12 @@ if mode == "Audit":
                 config_text = uf.getvalue().decode("utf-8", errors="ignore")
                 vendor, normalized, evidence, unmatched = parse_config(config_text)
                 findings = engine.evaluate(normalized, evidence, vendor, framework)
-                summary = engine.summarize(findings)
+                summary = engine.summarize(findings, normalized)
                 high = summary["fails_by_severity"].get("High", 0)
                 status = "OK" if summary["compliance_pct"] >= 80 else ("WARN" if summary["compliance_pct"] >= 60 else "HIGH RISK")
                 summary_rows.append({
                     "Device": uf.name,
+                    "Hostname": summary.get("hostname") or "-",
                     "Vendor": vendor.capitalize(),
                     "Score": f"{summary['compliance_pct']}%",
                     "Passed": f"{summary['passed']} / {summary['total']}",
@@ -258,7 +259,7 @@ if mode == "Audit":
                 })
                 device_infos.append({"name": uf.name, "vendor": vendor, "summary": summary})
 
-            st.dataframe(summary_rows, use_container_width=True)
+            st.dataframe(summary_rows, width="stretch")
 
             avg = round(sum(d["summary"]["compliance_pct"] for d in device_infos) / len(device_infos), 1)
             st.metric("Average Compliance Across Fleet", f"{avg}%")
@@ -293,7 +294,7 @@ elif mode == "Train Unknown Vendor":
         normalized, evidence, unmatched = generic_parser.parse(config_text, vendor_label=vendor_label)
 
         findings = engine.evaluate(normalized, evidence, vendor_label, framework)
-        summary = engine.summarize(findings)
+        summary = engine.summarize(findings, normalized)
 
         c1, c2, c3 = st.columns(3)
         c1.metric("Current Compliance", f"{summary['compliance_pct']}%",
@@ -345,7 +346,7 @@ elif mode == "Learned Mappings":
                     "Example": example,
                     "Source": source,
                 })
-            st.dataframe(rows, use_container_width=True)
+            st.dataframe(rows, width="stretch")
 
             with st.expander(f"Edit / delete entries for {vendor}"):
                 for pattern, entry in list(mappings.items()):

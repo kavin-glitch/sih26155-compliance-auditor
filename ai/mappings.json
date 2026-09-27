@@ -1,1 +1,84 @@
-{}
+{
+  "edgecore": {
+    "/system identity set": {
+      "category": "hostname",
+      "normalized_field": "hostname",
+      "example": "/system identity set name=EDGE-UNKNOWN-01",
+      "source": "human_confirmed"
+    },
+    "/ip service disable": {
+      "category": "telnet_disable",
+      "normalized_field": "telnet_enabled",
+      "example": "/ip service disable telnet",
+      "source": "human_confirmed"
+    },
+    "/ip service enable": {
+      "category": "ssh_v2",
+      "normalized_field": "ssh_version",
+      "example": "/ip service enable ssh",
+      "source": "human_confirmed"
+    },
+    "/ip service set": {
+      "category": "https_enable",
+      "normalized_field": "https_mgmt_enabled",
+      "example": "/ip service set www-ssl disabled=no",
+      "source": "human_confirmed"
+    },
+    "/system logging action": {
+      "category": "logging",
+      "normalized_field": "logging_enabled",
+      "example": "/system logging action add target=remote address=10.0.0.20",
+      "source": "human_confirmed"
+    },
+    "/system clock ntp-client": {
+      "category": "ntp",
+      "normalized_field": "ntp_configured",
+      "example": "/system clock ntp-client set enabled=yes primary-ntp=10.0.0.1",
+      "source": "human_confirmed"
+    },
+    "/user aaa-profile set": {
+      "category": "aaa",
+      "normalized_field": "aaa_configured",
+      "example": "/user aaa-profile set radius-enabled=yes",
+      "source": "human_confirmed"
+    },
+    "/ip firewall filter": {
+      "category": "vty_acl",
+      "normalized_field": "vty_acl_applied",
+      "example": "/ip firewall filter add chain=input src-address=10.0.0.0/24 action=accept comment=\"mgmt-access\"",
+      "source": "human_confirmed"
+    },
+    "/snmp community set": {
+      "category": "snmp_weak",
+      "normalized_field": "weak_snmp_community_detected",
+      "example": "/snmp community set [find default=yes] name=public",
+      "source": "human_confirmed"
+    },
+    "/user settings set": {
+      "category": "lockout",
+      "normalized_field": "login_lockout_configured",
+      "example": "/user settings set login-retry-limit=3",
+      "source": "human_confirmed"
+    },
+    "/system console set": {
+      "category": "exec_timeout",
+      "normalized_field": "exec_timeout_minutes",
+      "example": "/system console set idle-timeout=10m",
+      "source": "human_confirmed"
+    }
+  },
+  "unknown": {
+    "/system identity set": {
+      "category": "hostname",
+      "normalized_field": "hostname",
+      "example": "/system identity set name=EDGE-UNKNOWN-01",
+      "source": "human_confirmed"
+    },
+    "/ip service disable": {
+      "category": "hostname",
+      "normalized_field": "hostname",
+      "example": "/ip service disable telnet",
+      "source": "human_confirmed"
+    }
+  }
+}

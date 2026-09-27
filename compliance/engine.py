@@ -86,7 +86,7 @@ def evaluate(normalized, evidence, vendor, framework="CIS"):
     return findings
 
 
-def summarize(findings):
+def summarize(findings, normalized=None):
     total = len(findings)
     passed = sum(1 for f in findings if f["status"] == "PASS")
     failed = total - passed
@@ -95,7 +95,16 @@ def summarize(findings):
         if f["status"] == "FAIL":
             by_severity[f["severity"]] = by_severity.get(f["severity"], 0) + 1
     compliance_pct = round(100 * passed / total, 1) if total else 0.0
+
+    hostname = None
+    privileged_secret = None
+    if normalized:
+        hostname = normalized.get("hostname")
+        privileged_secret = normalized.get("privileged_secret_configured")
+
     return {
         "total": total, "passed": passed, "failed": failed,
         "compliance_pct": compliance_pct, "fails_by_severity": by_severity,
+        "hostname": hostname,
+        "privileged_secret_configured": privileged_secret,
     }
